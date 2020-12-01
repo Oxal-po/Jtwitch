@@ -56,7 +56,7 @@ public class Streams {
     public static ArrayList<Stream> getAllStreamByGame(String game){
         ArrayList<Stream> list = new ArrayList<>();
         for (int i = 1; i<=9; i++){
-            ArrayList<Stream> l = getListStreamsByGame(game, 100, i);
+            ArrayList<Stream> l = getListStreamsByGame(game, 100, i - 1);
             if (l.size() > 0){
                 list.addAll(l);
             }else {

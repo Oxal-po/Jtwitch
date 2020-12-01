@@ -14,10 +14,10 @@ public class Main {
 
     public static void main(String[] args) {
         JTwitchClient client = new JTwitchClient(ID_CLIENT);
-        final ArrayList<Stream> groupe = Streams.getAllStreamByGame("Grand theft auto V");
+        String name = "fortnite";
+        final ArrayList<Stream> groupe = Streams.getAllStreamByGame(name);
         //System.out.println(response.toString());
-        System.out.println(groupe);
 
-        System.out.println(groupe.size());
+        System.out.println(String.format("il y a %d qui joue actuellement à %s", groupe.size(), name));
     }
 }
