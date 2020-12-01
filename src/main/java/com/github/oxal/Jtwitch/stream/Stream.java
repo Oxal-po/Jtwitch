@@ -1,4 +1,7 @@
-package stream;
+package com.github.oxal.Jtwitch.stream;
+
+import com.github.oxal.Jtwitch.channel.Channel;
+import com.github.oxal.Jtwitch.channel.preview.Preview;
 
 import java.util.Arrays;
 

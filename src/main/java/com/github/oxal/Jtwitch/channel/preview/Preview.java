@@ -1,4 +1,4 @@
-package stream;
+package com.github.oxal.Jtwitch.channel.preview;
 
 public class Preview {
 
