@@ -4,6 +4,7 @@ import com.github.oxal.Jtwitch.channel.Channel;
 import com.github.oxal.Jtwitch.channel.preview.Preview;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 public class Stream {
     private long _id;
@@ -151,5 +152,18 @@ public class Stream {
                 ", preview=" + preview +
                 ", channel=" + channel +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Stream stream = (Stream) o;
+        return _id == stream._id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(_id);
     }
 }

@@ -10,14 +10,12 @@ public class JTwitchClient {
     public static String PATH = "https://api.twitch.tv/kraken/streams/";
     public static String LIMIT = "limit=%d";
     public static String GAME = "game=%s";
-    public static String PAGE = "page=%d";
+    public static String PAGE = "offset=%d";
 
     public static JTwitchClient context = new JTwitchClient();
 
     public JTwitchClient(String id) {
-        System.out.println(id);
-        JTwitchClient.id = id;
-        commands = new String[] {"curl", "-H", "Accept:application/vnd.twitchtv.v5+json", "-H", "Client-ID: " + id};
+        setId(id);
     }
 
     public JTwitchClient() {
