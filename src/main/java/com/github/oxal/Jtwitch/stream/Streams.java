@@ -12,8 +12,12 @@ public class Streams {
 
     private ArrayList<Stream> streams;
 
-    public Streams(ArrayList<Stream> streams) {
+    private Streams(ArrayList<Stream> streams) {
         this.streams = streams;
+    }
+
+    private Streams(){
+        streams = new ArrayList<>();
     }
 
     public ArrayList<Stream> getStreams() {
@@ -31,11 +35,11 @@ public class Streams {
                 '}';
     }
 
-    public static ArrayList<Stream> getListStreamsByGame(String game, int limit, int page){
-        return getStreamsByGame(game, limit, page).streams;
+    public static ArrayList<Stream> getStreamsByGame(String game, int limit, int page){
+        return getObjectStreamsByGame(game, limit, page).streams;
     }
 
-    public static Streams getStreamsByGame(String game, int limit, int page){
+    private static Streams getObjectStreamsByGame(String game, int limit, int page){
         StringBuilder builder = new StringBuilder(JTwitchClient.PATH + "?");
         builder.append(String.format(JTwitchClient.GAME, game.replace(" ", "+")));
         if (limit > 100){
@@ -56,7 +60,7 @@ public class Streams {
     public static ArrayList<Stream> getAllStreamByGame(String game){
         ArrayList<Stream> list = new ArrayList<>();
         for (int i = 1; i<=9; i++){
-            ArrayList<Stream> l = getListStreamsByGame(game, 100, i - 1);
+            ArrayList<Stream> l = getStreamsByGame(game, 100, i - 1);
             if (l.size() > 0){
                 list.addAll(l);
             }else {
