@@ -20,6 +20,7 @@ public class JTwitchClient implements StreamListener, StreamOnListener, StreamOf
     private static Collection<StreamListener> streamListeners;
     private static Collection<StreamOnListener> streamOnListeners;
     private static Collection<StreamOffListener> streamOffListeners;
+    private static Thread streamEvent;
 
     public static String[] commands;
     public static String PATH = "https://api.twitch.tv/kraken/streams/";
@@ -33,13 +34,7 @@ public class JTwitchClient implements StreamListener, StreamOnListener, StreamOf
         setId(id);
         streamListeners = new ArrayList<>();
         streamOnListeners = new ArrayList<>();
-        streamOnListeners.add(event -> {
-            System.out.println("le live de " + event.getStream().getChannel().getDisplay_name() + " vient d'être lancer : " + event.getStream().getChannel().getStatus());
-        });
         streamOffListeners = new ArrayList<>();
-        streamOffListeners.add(event -> {
-            System.out.println("le live de " + event.getStream().getChannel().getDisplay_name() + " vient de s'éteindre");
-        });
     }
 
     public JTwitchClient() {
@@ -106,14 +101,8 @@ public class JTwitchClient implements StreamListener, StreamOnListener, StreamOf
     }
 
     public void searchGame(String game){
-        Thread t = new Thread("Stream Listener"){
-            @Override
-            public void run() {
-                new StreamManager(new JTwitchClient(), game);
-            }
-        };
-
-        t.start();
+        streamEvent = new Thread(new StreamManager(new JTwitchClient(), game), "Stream Listener");
+        streamEvent.start();
     }
 
     @Override
@@ -141,4 +130,9 @@ public class JTwitchClient implements StreamListener, StreamOnListener, StreamOf
             streamOnListener.onStreamOn(event);
         }
     }
+
+    public void close(){
+        streamEvent.interrupt();
+    }
+
 }

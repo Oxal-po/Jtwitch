@@ -14,7 +14,13 @@ public class Main {
 
     public static void main(String[] args) {
         JTwitchClient client = new JTwitchClient(ID_CLIENT);
-        client.searchGame("wakfu");
+        client.searchGame("dofus");
+        client.addStreamOnListeners(event -> {
+            System.out.println("le live de " + event.getStream().getChannel().getDisplay_name() + " vient d'être lancer : " + event.getStream().getChannel().getStatus());
+        });
+        client.addStreamOffListeners(event -> {
+            System.out.println("le live de " + event.getStream().getChannel().getDisplay_name() + " vient de s'éteindre");
+        });
         String name = "wakfu";
         final ArrayList<Stream> groupe = Streams.getAllStreamByGame(name);
         //System.out.println(response.toString());

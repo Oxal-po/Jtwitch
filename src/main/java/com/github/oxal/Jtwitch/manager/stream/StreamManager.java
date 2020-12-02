@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 
-public class StreamManager extends CompletableFuture<Void> {
+public class StreamManager implements Runnable {
 
     private StreamOnListener streamOnListener;
     private StreamOffListener streamOffListener;
@@ -30,8 +30,6 @@ public class StreamManager extends CompletableFuture<Void> {
         this.nameGame = game;
         oldList = Streams.getAllStreamByGame(game);
         newList = new ArrayList<>();
-
-        run();
     }
 
     public StreamManager(JTwitchClient client, String game){
@@ -39,6 +37,7 @@ public class StreamManager extends CompletableFuture<Void> {
     }
 
 
+    @Override
     public void run() {
         ArrayList<Stream> on, off;
 
@@ -75,6 +74,11 @@ public class StreamManager extends CompletableFuture<Void> {
                 });
             }
             oldList = new ArrayList<>(newList);
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException e) {
+                break;
+            }
         }
     }
 
