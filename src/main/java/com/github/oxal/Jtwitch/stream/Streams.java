@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class Streams {
@@ -36,10 +37,12 @@ public class Streams {
     }
 
     public static ArrayList<Stream> getStreamsByGame(String game, int limit, int page){
-        return getObjectStreamsByGame(game, limit, page).streams;
+        Streams s = getObjectStreamsByGame(game, limit, page);
+        //System.out.println(s);
+        return s.streams;
     }
 
-    private static Streams getObjectStreamsByGame(String game, int limit, int page){
+    public static Streams getObjectStreamsByGame(String game, int limit, int page){
         StringBuilder builder = new StringBuilder(JTwitchClient.PATH + "?");
         builder.append(String.format(JTwitchClient.GAME, game.replace(" ", "+")));
         if (limit > 100){
@@ -57,7 +60,7 @@ public class Streams {
         return gson.fromJson(response, Streams.class);
     }
 
-    public static ArrayList<Stream> getAllStreamByGame(String game){
+    public static List<Stream> getAllStreamByGame(String game){
         ArrayList<Stream> list = new ArrayList<>();
         for (int i = 1; i<=9; i++){
             ArrayList<Stream> l = getStreamsByGame(game, 100, i - 1);
@@ -68,6 +71,6 @@ public class Streams {
             }
         }
 
-        return list;
+        return list.stream().distinct().collect(Collectors.toList());
     }
 }

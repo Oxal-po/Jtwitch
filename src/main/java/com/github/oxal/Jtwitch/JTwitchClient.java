@@ -61,7 +61,7 @@ public class JTwitchClient implements StreamListener, StreamOnListener, StreamOf
         return streamOnListeners;
     }
 
-    public static void addStreamOnListeners(StreamOnListener streamOnListener) {
+    public void addStreamOnListeners(StreamOnListener streamOnListener) {
         JTwitchClient.streamOnListeners.add(streamOnListener);
     }
 
@@ -69,7 +69,7 @@ public class JTwitchClient implements StreamListener, StreamOnListener, StreamOf
         return streamOffListeners;
     }
 
-    public static void addStreamOffListeners(StreamOffListener streamOffListener) {
+    public void addStreamOffListeners(StreamOffListener streamOffListener) {
         JTwitchClient.streamOffListeners.add(streamOffListener);
     }
 
@@ -101,7 +101,12 @@ public class JTwitchClient implements StreamListener, StreamOnListener, StreamOf
     }
 
     public void searchGame(String game){
+        searchGame(game, 60000);
+    }
+
+    public void searchGame(String game, int delay){
         streamEvent = new Thread(new StreamManager(new JTwitchClient(), game), "Stream Listener");
+        StreamManager.DELAY = delay;
         streamEvent.start();
     }
 

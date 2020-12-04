@@ -2,17 +2,16 @@ package com.github.oxal.Jtwitch.manager.stream;
 
 import com.github.oxal.Jtwitch.JTwitchClient;
 import com.github.oxal.Jtwitch.event.stream.StreamEvent;
-import com.github.oxal.Jtwitch.event.stream.StreamOffEvent;
-import com.github.oxal.Jtwitch.event.stream.StreamOnEvent;
 import com.github.oxal.Jtwitch.listener.stream.StreamListener;
 import com.github.oxal.Jtwitch.listener.stream.StreamOffListener;
 import com.github.oxal.Jtwitch.listener.stream.StreamOnListener;
 import com.github.oxal.Jtwitch.stream.Stream;
 import com.github.oxal.Jtwitch.stream.Streams;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.concurrent.CompletableFuture;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class StreamManager implements Runnable {
 
@@ -22,14 +21,17 @@ public class StreamManager implements Runnable {
     private String nameGame;
     private Collection<Stream> oldList;
     private Collection<Stream> newList;
+    public static int DELAY = 60000;
+    private SimpleDateFormat dateFormat;
 
     public StreamManager(StreamOnListener streamOnListener, StreamOffListener streamOffListener, StreamListener streamListener, String game) {
         this.streamOnListener = streamOnListener;
         this.streamOffListener = streamOffListener;
         this.streamListener = streamListener;
         this.nameGame = game;
-        oldList = Streams.getAllStreamByGame(game);
+        oldList = new ArrayList<>();
         newList = new ArrayList<>();
+        dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");;
     }
 
     public StreamManager(JTwitchClient client, String game){
@@ -39,8 +41,8 @@ public class StreamManager implements Runnable {
 
     @Override
     public void run() {
-        ArrayList<Stream> on, off;
-
+        List<Stream> on, off;
+        oldList = Streams.getAllStreamByGame(nameGame);
         while (true){
             newList = Streams.getAllStreamByGame(nameGame);
             on = getOnStream();
@@ -73,24 +75,46 @@ public class StreamManager implements Runnable {
                     }
                 });
             }
+
             oldList = new ArrayList<>(newList);
             try {
-                Thread.sleep(10000);
+                Thread.sleep(DELAY);
             } catch (InterruptedException e) {
                 break;
             }
         }
     }
 
-    private ArrayList<Stream> getOffStream(){
+    //todo cassé car des live se co puis deco
+
+    private List<Stream> getOffStream(){
         ArrayList<Stream> clone = new ArrayList<>(oldList);
-        clone.removeAll(newList);
+        for (Stream stream : newList){
+            for (int i = 0; i<clone.size(); i++){
+                if (stream.get_id() == clone.get(i).get_id()){
+                    clone.remove(i);
+                    i--;
+                }
+            }
+        }
         return clone;
     }
 
-    private ArrayList<Stream> getOnStream(){
+    private List<Stream> getOnStream(){
         ArrayList<Stream> clone = new ArrayList<>(newList);
         clone.removeAll(oldList);
+        clone = new ArrayList(clone.stream().filter(s -> {
+            try {
+                Date create = dateFormat.parse(s.getCreated_at());
+                Date thisDate = Calendar.getInstance().getTime();
+                int delay = DELAY < 60000 ? 120000 : DELAY*2;
+                thisDate.setTime(thisDate.getTime() - delay - 6000000);
+                return thisDate.before(create);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            return false;
+        }).collect(Collectors.toList()));
         return clone;
     }
 }
